@@ -1,39 +1,40 @@
 
 
-// const link = 'http://api.weatherstack.com/current?access_key=';
-// const accessKey = '090de3a3864352b810cc2f2b8f12b161';
 const apiKey = 'bac193800a0d15cae3dae7acaa16c3d8';
-
-// https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-
 
 
 let store = {
-	lat: '56.139918',
-	lon: '47.247728',
+	// lat: '56.139918',
+	// lon: '37.621478',
+	lat: '55.751387',
+	lon: '37.618621',
 	cityName: 'Чебы',
 	description: '',
 	temperature: 0,
+	temperatureMin: 0,
+	temperatureMax: 0,
 	feelsLike: '',
 	windSpeed: '',
 	calcultaionTime: '',
 	timeZone: '',
+	pressure: '',
+	icon: ''
 }
 
 
 const fetchData = async () => {
 	const result = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${store.lat}&lon=${store.lon}&lang=ru&units=metric&appid=${apiKey}`);
 	const data = await result.json();
+
 	const {
-		weather: [{ description }],
-		main: { temp: temperature, feels_like: feelsLike, },
+		weather: [{ description, icon }],
+		main: { temp: temperature, feels_like: feelsLike, pressure, temp_min: temperatureMin, temp_max: temperatureMax },
 		wind: { speed: windSpeed, },
 		dt: calcultaionTime,
 		timezone: timeZone,
 		name: cityName,
 	} = data;
-	// console.log(data);
-	// console.log(description);
+	console.log(data);
 	store = {
 		cityName,
 		description,
@@ -41,74 +42,77 @@ const fetchData = async () => {
 		feelsLike,
 		windSpeed,
 		calcultaionTime: getHoursAndMinutesFromUnixTimeStamp(calcultaionTime),
-		feelsLike: (temperature > 0 ? '+' : '-') + Math.round(feelsLike) + '°',
+		feelsLike: (feelsLike > 0 ? '+' : '-') + Math.round(feelsLike) + '°',
+		pressure: getMmfromhPa(pressure),
+		temperatureMin: (temperatureMin > 0 ? '+' : '-') + Math.round(temperatureMin) + '°',
+		temperatureMax: (temperatureMax > 0 ? '+' : '-') + Math.round(temperatureMax) + '°',
+		icon: getFontByWeatherIcon(icon),
 	}
 
-	console.log(store);
 	readComponent();
 }
 
 const readComponent = () => {
 	weatherСity.innerHTML = store.cityName;
-	weatherDescription.innerHTML = store.description;
 	weatherTemperature.innerHTML = store.temperature;
-	weatherFeelsLike.innerHTML = store.feelsLike;
+	weatherStatus.innerHTML = 'На ' + store.calcultaionTime + ' ' + store.description;
+	weatherFeelsLike.innerHTML += store.feelsLike;
+	weatherWindSpeed.innerHTML += store.windSpeed + ' м/c';
+	weatherPressure.innerHTML += store.pressure + ' мм.рт.ст.';
+	weatherTemperatureMin.innerHTML = store.temperatureMin;
+	weatherTemperatureMax.innerHTML = store.temperatureMax;
+	weatherImg.classList.addSeveral(store.icon);
+	// weatherImg.classList.add('fa-solid');
+	// weatherImg.classList.add('fa-sun');
 }
+
 fetchData();
 
 const weatherСity = document.querySelector('.weather__city');
-const weatherDescription = document.querySelector('.weather__description');
 const weatherTemperature = document.querySelector('.weather__temperature');
 const weatherFeelsLike = document.querySelector('.weather__feels-like');
+const weatherStatus = document.querySelector('.weather__status');
+const weatherWindSpeed = document.querySelector('.weather__wind-speed');
+const weatherPressure = document.querySelector('.weather__pressure');
+const weatherTemperatureMin = document.querySelector('.weather__temperature-min');
+const weatherTemperatureMax = document.querySelector('.weather__temperature-max');
+const weatherImg = document.querySelector('.weather__img');
 
-// .temperature__city {
-// }
-// .temperature__date-time {
-// }
-// .temperature__body {
-// }
-// .temperature__img {
-// }
-// .temperature__current-tempearure {
-// }
-// .temperature__propetis {
-// }
+
+
+
 
 function getHoursAndMinutesFromUnixTimeStamp(unixTimeStamp) {
 	const date = new Date(unixTimeStamp * 1000);
 	const hours = '0' + date.getHours();
 	const minutes = '0' + date.getMinutes();
 	return hours.slice(-2) + ':' + minutes.slice(-2)
-
 }
 
+function getMmfromhPa(pressure) {
+	return Math.round(pressure * 7.50062 / 10)
+}
 
-// const convertTime12to24 = (time12h, utcOffset) => {
-// 	let [time, modifier] = time12h.split(' ');
+function getFontByWeatherIcon(icon) {
+	switch (icon) {
+		case '01d': return 'fa-solid fa-sun';
+		case '01n': return 'fa-solid fa-moon';
+		case '02d': return 'fa-solid fa-cloud-sun';
+		case '03d': return 'fa-solid fa-cloud';
+		case '04d': return 'fa-solid fa-clouds';
+		case '09d': return 'fa-solid fa-cloud-showers-heavy';
+		case '10d': return 'fa-solid fa-cloud-showers';
+		case '11d': return 'fa-solid fa-cloud-bolt';
+		case '13d': return 'fa-solid fa-snowflake';
+		case '50d': return 'fa-solid fa-cloud-fog';
+		default:
+			return 'fa-solid fa-gears';
+	}
+}
 
-// 	let [hours, minutes] = time.split(':');
-
-// 	hours = +hours + +utcOffset;
-
-// 	if ((hours) > 12) {
-// 		hours = +hours - +12;
-// 		switch (modifier) {
-// 			case 'AM': modifier = 'PM'
-// 				break
-// 			case 'PM': modifier = 'AM'
-// 		}
-// 	}
-
-// 	if (modifier === 'PM') {
-// 		hours = +hours + +12;
-// 	}
-
-// 	if (hours === 24) {
-// 		hours = '00';
-// 	} else if (hours < 10) {
-// 		hours = '0' + hours;
-// 	}
-
-// 	return `${hours}:${minutes}`;
-// }
-
+DOMTokenList.prototype.addSeveral = function (classes) {
+	let array = classes.split(' ');
+	for (let clas of array) {
+		this.add(clas);
+	}
+}

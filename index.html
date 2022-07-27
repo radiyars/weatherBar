@@ -5,7 +5,8 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<title>Погода сейчас</title>
+	<link rel="stylesheet" href="/css/iconsfont.css">
 	<link rel="stylesheet" href="/css/style.css">
 </head>
 
@@ -13,20 +14,34 @@
 
 	<div class="wrapper">
 		<div class="wrapper__weather weather">
-			<div class="weather__city"></div>
-			<div class="weather__description"></div>
-			<div class="weather__body">
-				<div class="weather__img"></div>
-				<div class="weather__temperature"></div>
-				<div class="weather__calcultaion-time"></div>
+			<div class="weather__header">
+				<div class="weather__city"></div>
+				<div class="weather__status">
+				</div>
 			</div>
-			<div class="weather__feels-like"></div>
-			<div class="weather__propetis"></div>
+			<div class="weather__row">
+				<div class="weather__img"></div>
+				<div class="weather__temperatures">
+					<div class="weather__temperature"> </div>
+					<div class="weather__temperature-range">
+						<div class="weather__temperature-range">
+							<div class="weather__temperature-max"> </div>
+							<div class="weather__temperature-min"> </div>
+						</div>
+					</div>
+				</div>
+				<div class="weather__properties">
+					<div class="weather__propetry">Ощущается как: <span class="weather__feels-like"></span></div>
+					<div class="weather__propetry">Ветер: <span class="weather__wind-speed"></span></div>
+					<div class="weather__propetry">Давление: <span class="weather__pressure"></span></div>
+				</div>
+			</div>
 		</div>
 	</div>
 
 
 </body>
+
 <script src="/script/script.js"></script>
 
 </html>
